@@ -1,6 +1,6 @@
-package com.example.tp8;
+package com.example.devandroid.tp8v2;
 
-import androidx.appcompat.app.AppCompatActivity;
+import android.app.Activity;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,7 +21,7 @@ import java.util.Random;
 
 import android.os.Bundle;
 
-public class ActividadPrincipal extends AppCompatActivity {
+public class ActividadPrincipal extends Activity {
 
     CCGLSurfaceView VistaPrincipal;
 
@@ -36,7 +36,7 @@ public class ActividadPrincipal extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart(){
+    protected void onStart() {
         super.onStart();
         clsJuego miGenialJuego;
         miGenialJuego = new clsJuego(VistaPrincipal);
@@ -48,6 +48,7 @@ public class ActividadPrincipal extends AppCompatActivity {
         CCSize _Pantalla;
         Sprite _Objeto;
         Sprite _Objeto2;
+        boolean _estaTocandoAlJugador;
 
         public clsJuego(CCGLSurfaceView VistaDelJuego) {
             Log.d("Comienzo", "Comienza el constructor de la clase");
@@ -92,7 +93,7 @@ public class ActividadPrincipal extends AppCompatActivity {
                 ponerObjeto1();
                 ponerObjeto2();
 
-                Log.d("CapaJuego","Habilito el touch");
+                Log.d("CapaJuego", "Habilito el touch");
                 setIsTouchEnabled(true);
             }
 
@@ -152,45 +153,61 @@ public class ActividadPrincipal extends AppCompatActivity {
                 super.addChild(_Objeto2);
 
             }
+            @Override
+            public boolean ccTouchesBegan(MotionEvent event) {
+                CCPoint PuntoTocado;
+                PuntoTocado = new CCPoint();
 
-        }
-
-        @Override
-        public boolean ccTouchesBegan(MotionEvent event){
-            CCPoint PuntoTocado;
-            PuntoTocado = new CCPoint();
-
-            PuntoTocado.x=event.getX();
-            PuntoTocado.y=_Pantalla.getHeight()-event.getY();
-            Log.d("ControlDeToque","Comienza el toque en X:"+PuntoTocado.x+" - Y: "+PuntoTocado.y);
-            if(InterseccionEntrePuntoySprite(_Objeto,PuntoTocado.x,PuntoTocado.y)){
-                moverObjeto(PuntoTocado);
-                _estaTocandoAlJugador = true;
+                PuntoTocado.x = event.getX();
+                PuntoTocado.y = _Pantalla.getHeight() - event.getY();
+                Log.d("ControlDeToque", "Comienza el toque en X:" + PuntoTocado.x + " - Y: " + PuntoTocado.y);
+                if (InterseccionEntrePuntoySprite(_Objeto, PuntoTocado.x, PuntoTocado.y)) {
+                    moverObjeto(PuntoTocado);
+                    _estaTocandoAlJugador = true;
+                } else {
+                    _estaTocandoAlJugador = false;
+                }
+                return true;
             }
-            else{
-                _estaTocandoAlJugador = false;
+
+            @Override
+            public boolean ccTouchesMoved(MotionEvent event) {
+                CCPoint PuntoTocado;
+                PuntoTocado = new CCPoint();
+
+                PuntoTocado.x = event.getX();
+                PuntoTocado.y = _Pantalla.getHeight() - event.getY();
+                Log.d("ControlDeToque", "Mueve el toque X:" + PuntoTocado.x + " - Y: " + PuntoTocado.y);
+                if (_estaTocandoAlJugador) {
+                    moverObjeto(PuntoTocado);
+                }
+                return true;
             }
-            return true;
         }
 
-        @Override
-        public boolean ccTouchesMoved(MotionEvent event){
-            CCPoint PuntoTocado;
-            PuntoTocado = new CCPoint();
 
-            PuntoTocado.x=event.getX();
-            PuntoTocado.y=_Pantalla.getHeight()-event.getY();
-            Log.d("ControlDeToque","Mueve el toque X:"+PuntoTocado.x+" - Y: "+PuntoTocado.y);
-            if(_estaTocandoAlJugador){
-                moverObjeto(PuntoTocado);
+
+        void moverObjeto(CCPoint PuntoAMover) {
+            Log.d("MoverObjeto", "Muevo el objeto");
+            _Objeto.setPosition(PuntoAMover.x, PuntoAMover.y);
+        }
+
+        public boolean InterseccionEntrePuntoySprite(Sprite SpriteAVerificar, Float puntoXAVerificar, Float puntoYAVerificar) {
+            Boolean HayInterseccion = false;
+            //Determino los bordes de cada Sprite
+            Float SpArriba, SpAbajo, SpDerecha, SpIzquierda;
+            SpArriba = SpriteAVerificar.getPositionY() + SpriteAVerificar.getHeight() / 2;
+            SpAbajo = SpriteAVerificar.getPositionY() - SpriteAVerificar.getHeight() / 2;
+            SpDerecha = SpriteAVerificar.getPositionX() + SpriteAVerificar.getWidth() / 2;
+            SpIzquierda = SpriteAVerificar.getPositionX() - SpriteAVerificar.getWidth() / 2;
+
+            if(puntoXAVerificar<=SpIzquierda && puntoXAVerificar<=SpDerecha && puntoYAVerificar>=SpAbajo && puntoYAVerificar<=SpArriba){
+                HayInterseccion = true;
             }
-            return true;
+            return HayInterseccion;
         }
 
-        void moverObjeto(CCPoint PuntoAMover){
-            Log.d("MoverObjeto","Muevo el objeto");
-            _Objeto.setPosition(PuntoAMover.x,PuntoAMover.y);
-        }
 
     }
 }
+    /////////////////////////////////////////////////////////////

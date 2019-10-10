@@ -1,4 +1,4 @@
-package com.example.tp8;
+package com.example.devandroid.tp8v2;
 
 import org.junit.Test;
 
