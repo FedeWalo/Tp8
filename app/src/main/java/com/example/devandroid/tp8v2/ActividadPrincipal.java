@@ -48,7 +48,8 @@ public class ActividadPrincipal extends Activity {
         CCSize _Pantalla;
         Sprite _Objeto;
         Sprite _Objeto2;
-        boolean _estaTocandoAlJugador;
+        boolean _estaTocandoAlJugador1=false;
+        boolean _estaTocandoAlJugador2=false;
 
         public clsJuego(CCGLSurfaceView VistaDelJuego) {
             Log.d("Comienzo", "Comienza el constructor de la clase");
@@ -160,12 +161,15 @@ public class ActividadPrincipal extends Activity {
 
                 PuntoTocado.x = event.getX();
                 PuntoTocado.y = _Pantalla.getHeight() - event.getY();
-                Log.d("ControlDeToque", "Comienza el toque en X:" + PuntoTocado.x + " - Y: " + PuntoTocado.y);
-                if (InterseccionEntrePuntoySprite(_Objeto, PuntoTocado.x, PuntoTocado.y)) {
-                    moverObjeto(PuntoTocado);
-                    _estaTocandoAlJugador = true;
-                } else {
-                    _estaTocandoAlJugador = false;
+                if (InterseccionEntrePuntoySprite1(_Objeto, PuntoTocado.x, PuntoTocado.y)) {
+                    Log.d("ControlDeToque", "Toco al 1");
+                    moverObjeto(PuntoTocado,_Objeto);
+                    _estaTocandoAlJugador1 = true;
+                }
+                else if(InterseccionEntrePuntoySprite2(_Objeto2,PuntoTocado.x,PuntoTocado.y)){
+                    Log.d("ControlDeToque", "Toco al 2");
+                    moverObjeto(PuntoTocado,_Objeto2);
+                    _estaTocandoAlJugador2 = true;
                 }
                 return true;
             }
@@ -177,9 +181,14 @@ public class ActividadPrincipal extends Activity {
 
                 PuntoTocado.x = event.getX();
                 PuntoTocado.y = _Pantalla.getHeight() - event.getY();
-                Log.d("ControlDeToque", "Mueve el toque X:" + PuntoTocado.x + " - Y: " + PuntoTocado.y);
-                if (_estaTocandoAlJugador) {
-                    moverObjeto(PuntoTocado);
+
+                if (_estaTocandoAlJugador1) {
+                    moverObjeto(PuntoTocado,_Objeto);
+                    Log.d("ControlDeToque", "TOCO EL OBJ1" + PuntoTocado.x + " - Y: " + PuntoTocado.y);
+                }
+                else if(_estaTocandoAlJugador2){
+                    moverObjeto(PuntoTocado,_Objeto2);
+                    Log.d("ControlDeToque", "TOCO EL OBJ2" + PuntoTocado.x + " - Y: " + PuntoTocado.y);
                 }
                 return true;
             }
@@ -187,12 +196,12 @@ public class ActividadPrincipal extends Activity {
 
 
 
-        void moverObjeto(CCPoint PuntoAMover) {
+        void moverObjeto(CCPoint PuntoAMover, Sprite ObjetoAMover) {
             Log.d("MoverObjeto", "Muevo el objeto");
-            _Objeto.setPosition(PuntoAMover.x, PuntoAMover.y);
+            ObjetoAMover.setPosition(PuntoAMover.x, PuntoAMover.y);
         }
 
-        public boolean InterseccionEntrePuntoySprite(Sprite SpriteAVerificar, Float puntoXAVerificar, Float puntoYAVerificar) {
+        public boolean InterseccionEntrePuntoySprite1(Sprite SpriteAVerificar, Float puntoXAVerificar, Float puntoYAVerificar) {
             Boolean HayInterseccion = false;
             //Determino los bordes de cada Sprite
             Float SpArriba, SpAbajo, SpDerecha, SpIzquierda;
@@ -207,6 +216,20 @@ public class ActividadPrincipal extends Activity {
             return HayInterseccion;
         }
 
+        public boolean InterseccionEntrePuntoySprite2(Sprite SpriteAVerificar, Float puntoXAVerificar, Float puntoYAVerificar) {
+            Boolean HayInterseccion = false;
+            //Determino los bordes de cada Sprite
+            Float SpArriba, SpAbajo, SpDerecha, SpIzquierda;
+            SpArriba = SpriteAVerificar.getPositionY() + SpriteAVerificar.getHeight() / 2;
+            SpAbajo = SpriteAVerificar.getPositionY() - SpriteAVerificar.getHeight() / 2;
+            SpDerecha = SpriteAVerificar.getPositionX() + SpriteAVerificar.getWidth() / 2;
+            SpIzquierda = SpriteAVerificar.getPositionX() - SpriteAVerificar.getWidth() / 2;
+
+            if(puntoXAVerificar<=SpIzquierda && puntoXAVerificar<=SpDerecha && puntoYAVerificar>=SpAbajo && puntoYAVerificar<=SpArriba){
+                HayInterseccion = true;
+            }
+            return HayInterseccion;
+        }
 
     }
 }

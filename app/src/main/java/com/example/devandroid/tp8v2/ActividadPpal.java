@@ -42,7 +42,8 @@ public class ActividadPpal extends Activity {
         CCSize _Pantalla;
         Sprite _Objeto;
         Sprite _Objeto2;
-        boolean _estaTocandoAlJugador;
+        boolean _estaTocandoAlJugador1=false;
+        boolean _estaTocandoAlJugador2=false;
 
         public clsJuego(CCGLSurfaceView VistaDelJuego) {
             Log.d("Comienzo", "Comienza el constructor de la clase");
@@ -155,28 +156,36 @@ public class ActividadPpal extends Activity {
                 PuntoTocado.x = event.getX();
                 PuntoTocado.y = _Pantalla.getHeight() - event.getY();
                 Log.d("ControlDeToque", "Comienza el toque en X:" + PuntoTocado.x + " - Y: " + PuntoTocado.y);
-                if (InterseccionEntrePuntoySprite(_Objeto, PuntoTocado.x, PuntoTocado.y)) {
-                    Log.d("MoverObjeto","Entre al if");
-                    moverObjeto(PuntoTocado);
-                    _estaTocandoAlJugador = true;
-                } else {
-                    Log.d("MoverObjeto","Entre al if2");
-                    _estaTocandoAlJugador = false;
+                if (InterseccionEntrePuntoySprite1(_Objeto, PuntoTocado.x, PuntoTocado.y)) {
+                    Log.d("ControlDeToque", "Toco al 1");
+                    moverObjeto(PuntoTocado,_Objeto);
+                    _estaTocandoAlJugador1 = true;
+                }
+                else if(InterseccionEntrePuntoySprite2(_Objeto2,PuntoTocado.x,PuntoTocado.y)){
+                    Log.d("ControlDeToque", "Toco al 2");
+                    moverObjeto(PuntoTocado,_Objeto2);
+                    _estaTocandoAlJugador2 = true;
                 }
                 return true;
             }
 
             @Override
             public boolean ccTouchesMoved(MotionEvent event) {
+                Log.d("ControlDeToque","Variable1: "+_estaTocandoAlJugador1);
+                Log.d("ControlDeToque","Variable2: "+_estaTocandoAlJugador2);
                 CCPoint PuntoTocado;
                 PuntoTocado = new CCPoint();
 
                 PuntoTocado.x = event.getX();
                 PuntoTocado.y = _Pantalla.getHeight() - event.getY();
                 Log.d("ControlDeToque", "Mueve el toque X:" + PuntoTocado.x + " - Y: " + PuntoTocado.y);
-                if (_estaTocandoAlJugador) {
-                    Log.d("MoverObjeto","Entre al if3");
-                    moverObjeto(PuntoTocado);
+                if (_estaTocandoAlJugador1) {
+                    moverObjeto(PuntoTocado,_Objeto);
+                    Log.d("ControlDeToque", "TOCO EL OBJ1" + PuntoTocado.x + " - Y: " + PuntoTocado.y);
+                }
+                if(_estaTocandoAlJugador2){
+                    moverObjeto(PuntoTocado,_Objeto2);
+                    Log.d("ControlDeToque", "TOCO EL OBJ2" + PuntoTocado.x + " - Y: " + PuntoTocado.y);
                 }
                 return true;
             }
@@ -184,12 +193,12 @@ public class ActividadPpal extends Activity {
 
 
 
-        void moverObjeto(CCPoint PuntoAMover) {
+        void moverObjeto(CCPoint PuntoAMover,Sprite ObjetoAMover) {
             Log.d("MoverObjeto", "Muevo el objeto");
-            _Objeto.setPosition(PuntoAMover.x, PuntoAMover.y);
+            ObjetoAMover.setPosition(PuntoAMover.x, PuntoAMover.y);
         }
 
-        public boolean InterseccionEntrePuntoySprite(Sprite SpriteAVerificar, Float puntoXAVerificar, Float puntoYAVerificar) {
+        public boolean InterseccionEntrePuntoySprite1(Sprite SpriteAVerificar, Float puntoXAVerificar, Float puntoYAVerificar) {
             Boolean HayInterseccion = false;
             //Determino los bordes de cada Sprite
             Float SpArriba, SpAbajo, SpDerecha, SpIzquierda;
